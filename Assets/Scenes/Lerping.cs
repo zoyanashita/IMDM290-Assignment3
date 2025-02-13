@@ -1,6 +1,5 @@
 // UMD IMDM290 
-// Instructor: Myungin Lee
-// All the same Lerp but using audio
+// Zoya Rahman & Anjali
 
 using System.Collections;
 using System.Collections.Generic;
@@ -29,16 +28,25 @@ public class AudioReactive : MonoBehaviour
         for (int i =0; i < numSphere; i++){
             // Random start positions
             float r = 10f;
-            startPosition[i] = new Vector3(r * Random.Range(-1f, 1f), r * Random.Range(-1f, 1f), r * Random.Range(-1f, 1f));        
+            startPosition[i] = new Vector3(
+                r * Random.Range(-1f, 1f), 
+                r * Random.Range(-1f, 1f), 
+                r * Random.Range(-1f, 1f)
+                );        
 
-            r = 3f; // radius of the circle
-            // Circular end position
-            endPosition[i] = new Vector3(r * Mathf.Sin(i * 2 * Mathf.PI / numSphere), r * Mathf.Cos(i * 2 * Mathf.PI / numSphere));
+            // how to make heart shape 
+            float t = i * 6f * Mathf.PI / numSphere; 
+            float x = Mathf.Sin(t); 
+            float y = Mathf.Cos(t);
+            endPosition[i] = new Vector3(
+                (float)(Mathf.Sqrt(2f) * Mathf.Pow(x, 3)),
+                (float)((2f * y) - Mathf.Pow(y, 2) - Mathf.Pow(y, 3)),
+                15f
+            );
         }
         // Let there be spheres..
         for (int i =0; i < numSphere; i++){
             // Draw primitive elements:
-            // https://docs.unity3d.com/6000.0/Documentation/ScriptReference/GameObject.CreatePrimitive.html
             spheres[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere); 
 
             // Position
@@ -58,17 +66,11 @@ public class AudioReactive : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // ***Here, we use audio Amplitude, where else do you want to use?
-        // Measure Time 
-        // Time.deltaTime = The interval in seconds from the last frame to the current one
-        // but what if time flows according to the music's amplitude?
+        // ***Here, we use audio Amplitude, where else do you want to use
         time += Time.deltaTime * AudioSpectrum.audioAmp; 
         // what to update over time?
         for (int i =0; i < numSphere; i++){
             // Lerp : Linearly interpolates between two points.
-            // https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Vector3.Lerp.html
-            // Vector3.Lerp(startPosition, endPosition, lerpFraction)
-            
             // lerpFraction variable defines the point between startPosition and endPosition (0~1)
             lerpFraction = Mathf.Sin(time) * 0.5f + 0.5f;
 
