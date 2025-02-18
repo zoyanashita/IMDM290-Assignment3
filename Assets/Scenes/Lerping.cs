@@ -46,7 +46,7 @@ public class AudioReactive : MonoBehaviour
         // Let there be spheres..
         for (int i =0; i < numSphere; i++){
             // Draw primitive elements:
-            spheres[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere); 
+            spheres[i] = GameObject.CreatePrimitive(PrimitiveType.Cylinder); 
 
             // Position
             initPos[i] = startPosition[i];
@@ -105,6 +105,22 @@ public class AudioReactive : MonoBehaviour
                     20f
                 );
             }
+            for (int i =0; i < numSphere; i++){
+                // Draw primitive elements:
+                GameObject.Destroy(spheres[i]);
+                spheres[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere); 
+
+                // Position
+                initPos[i] = startPosition[i];
+                spheres[i].transform.position = initPos[i];
+
+                // Color
+                // Get the renderer of the spheres and assign colors.
+                Renderer sphereRenderer = spheres[i].GetComponent<Renderer>();
+                float hue = (float)i / numSphere; // Hue cycles through 0 to 1
+                Color color = Color.HSVToRGB(hue, 1f, 1f); // Full saturation and brightness
+                sphereRenderer.material.color = color;
+            }   
         }
     }
 }
