@@ -10,6 +10,11 @@ using UnityEngine;
 
 public class AudioSpectrum: MonoBehaviour
 {
+    private static AudioSpectrum instance;
+    public static AudioSpectrum Instance
+    {
+        get { return instance; }
+    }
     AudioSource source;
     public static int FFTSIZE = 1024; // Fast Fourier Transformation 
     public static float[] samples = new float[FFTSIZE];
@@ -18,6 +23,22 @@ public class AudioSpectrum: MonoBehaviour
     {
         source = GetComponent<AudioSource>();       
     }
+    //  keep object across scenes 
+    void Awake()
+    {
+        // if an instance doesn't exist, use this one
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject); // keep game object across scenes
+        }
+        else if (instance != this)
+        {
+            // destory game object if it already exists. 
+            Destroy(gameObject);
+        }
+    }
+
     void Update()
     {
         // transforming audio source to samples of the frequency 
