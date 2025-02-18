@@ -23,7 +23,6 @@ public class AudioReactive : MonoBehaviour
         initPos = new Vector3[numSphere]; // Start positions
         startPosition = new Vector3[numSphere]; 
         endPosition = new Vector3[numSphere]; 
-        heartPos = new Vector3[numSphere];
         
         // Define target positions. Start = random, End = heart 
         for (int i =0; i < numSphere; i++){
