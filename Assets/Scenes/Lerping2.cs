@@ -1,7 +1,7 @@
 // UMD IMDM290 
 // Zoya Rahman, Anjali Murthy
 // Sourced and modified from Dr. Myungin Lee
-using UnityEngine.SceneManagement; 
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,9 +36,14 @@ public class AudioReactive : MonoBehaviour
                 );        
 
             // making a wing shape 
-            float t = i * 24f * Mathf.PI / numSphere;  // covers multiple cycles 
-            float x = Mathf.Sin(t) * (Mathf.Exp(Mathf.Cos(t))  - 2f * Mathf.Cos(4f * t) - Mathf.Pow(Mathf.Sin(t / 12f), 5f));
-            float y = Mathf.Cos(t) * (Mathf.Exp(Mathf.Cos(t)) - 2f * Mathf.Cos(4f * t)  - Mathf.Pow(Mathf.Sin(t / 12f), 5f));
+            float t = i * 6f * Mathf.PI / numSphere; 
+            float x = Mathf.Sin(t); 
+            float y = Mathf.Cos(t);
+            heartPos[i] = new Vector3(
+                5f * (float)(Mathf.Sqrt(2f) * Mathf.Pow(x, 3)),
+                5f * (float)((2f * y) - Mathf.Pow(y, 2) - Mathf.Pow(y, 3)),
+                20f
+            );
 
             float scale = 4f;
             endPosition[i] = new Vector3(scale * x, scale * y, 15f);
@@ -92,15 +97,6 @@ public class AudioReactive : MonoBehaviour
                 ); 
             sphereRenderer.material.color = color;
 
-        }
-
-        lerpFraction = Mathf.Sin(time) * 0.5f + 0.5f;
-
-        // If your animation is meant to finish once lerpFraction hits ~1
-        if (lerpFraction > 0.99f)
-        {
-            // Switch scenes
-            SceneManager.LoadScene("Scene2");
         }
     }
 }
