@@ -71,6 +71,13 @@ public class AudioReactive : MonoBehaviour
             // lerpFraction variable defines the point between startPosition and endPosition (0~1)
             lerpFraction = Mathf.Sin(time) * 0.5f + 0.5f;
 
+            // If your animation is meant to finish once lerpFraction hits ~1
+            if (lerpFraction > 0.99f)
+            {
+                // Switch scenes
+                SceneManager.LoadScene("Scene2");
+            }
+
             // Lerp logic. Update position       
             t = i* 2 * Mathf.PI / numSphere;
             spheres[i].transform.position = Vector3.Lerp(startPosition[i], endPosition[i], lerpFraction);
@@ -92,15 +99,6 @@ public class AudioReactive : MonoBehaviour
                 ); 
             sphereRenderer.material.color = color;
 
-        }
-
-        lerpFraction = Mathf.Sin(time) * 0.5f + 0.5f;
-
-        // If your animation is meant to finish once lerpFraction hits ~1
-        if (lerpFraction > 0.99f)
-        {
-            // Switch scenes
-            SceneManager.LoadScene("Scene2");
         }
     }
 }

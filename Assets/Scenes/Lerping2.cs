@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioReactive : MonoBehaviour
+public class NewAudioReactive : MonoBehaviour
 {
     GameObject[] spheres;
     static int numSphere = 200; 
@@ -39,14 +39,11 @@ public class AudioReactive : MonoBehaviour
             float t = i * 6f * Mathf.PI / numSphere; 
             float x = Mathf.Sin(t); 
             float y = Mathf.Cos(t);
-            heartPos[i] = new Vector3(
+            endPosition[i] = new Vector3(
                 5f * (float)(Mathf.Sqrt(2f) * Mathf.Pow(x, 3)),
                 5f * (float)((2f * y) - Mathf.Pow(y, 2) - Mathf.Pow(y, 3)),
                 20f
             );
-
-            float scale = 4f;
-            endPosition[i] = new Vector3(scale * x, scale * y, 15f);
         }
         // Let there be spheres..
         for (int i =0; i < numSphere; i++){
