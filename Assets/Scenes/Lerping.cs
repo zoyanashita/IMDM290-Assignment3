@@ -14,7 +14,12 @@ public class AudioReactive : MonoBehaviour
     Vector3[] initPos;
     Vector3[] startPosition, endPosition;
     float lerpFraction; // Lerp point between 0~1
-    float t;
+    float t; // used for parametric form 
+    int iteration = 0; // 
+    float R = 1f; // radius for star
+    float alpha = 0.5f; // how deep star goes 
+    float n = 5f; // star points
+    float x, y, scale;
 
     // Start is called before the first frame update
     void Start()
@@ -36,17 +41,17 @@ public class AudioReactive : MonoBehaviour
                 );        
 
             // making a wing shape 
-            float t = i * 24f * Mathf.PI / numSphere;  // covers multiple cycles 
-            float x = Mathf.Sin(t) * (Mathf.Exp(Mathf.Cos(t))  - 2f * Mathf.Cos(4f * t) - Mathf.Pow(Mathf.Sin(t / 12f), 5f));
-            float y = Mathf.Cos(t) * (Mathf.Exp(Mathf.Cos(t)) - 2f * Mathf.Cos(4f * t)  - Mathf.Pow(Mathf.Sin(t / 12f), 5f));
+            t = i * 24f * Mathf.PI / numSphere;
+            x = Mathf.Sin(t) * (Mathf.Exp(Mathf.Cos(t))  - 2f * Mathf.Cos(4f * t) - Mathf.Pow(Mathf.Sin(t / 12f), 5f));
+            y = Mathf.Cos(t) * (Mathf.Exp(Mathf.Cos(t)) - 2f * Mathf.Cos(4f * t)  - Mathf.Pow(Mathf.Sin(t / 12f), 5f));
 
-            float scale = 4f;
+            scale = 4f;
             endPosition[i] = new Vector3(scale * x, scale * y, 15f);
         }
         // Let there be spheres..
         for (int i =0; i < numSphere; i++){
             // Draw primitive elements:
-            spheres[i] = GameObject.CreatePrimitive(PrimitiveType.Cylinder); 
+            spheres[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere); 
 
             // Position
             initPos[i] = startPosition[i];
@@ -74,7 +79,7 @@ public class AudioReactive : MonoBehaviour
             // Lerp logic. Update position       
             t = i* 2 * Mathf.PI / numSphere;
             spheres[i].transform.position = Vector3.Lerp(startPosition[i], endPosition[i], lerpFraction);
-            float scale = 1f + AudioSpectrum.audioAmp;
+            scale = 1f + AudioSpectrum.audioAmp;
             spheres[i].transform.localScale = new Vector3(scale, 1f, 1f);
             spheres[i].transform.Rotate(AudioSpectrum.audioAmp, 1f, 1f);
             
@@ -93,34 +98,92 @@ public class AudioReactive : MonoBehaviour
             sphereRenderer.material.color = color;
         }
 
-        if (spheres[199].transform.position == startPosition[199]) {
-            for (int i =0; i < numSphere; i++){
-                // making a wing shape 
-                float t = i * 6f * Mathf.PI / numSphere; 
-                float x = Mathf.Sin(t); 
-                float y = Mathf.Cos(t);
-                endPosition[i] = new Vector3(
-                    5f * (float)(Mathf.Sqrt(2f) * Mathf.Pow(x, 3)),
-                    5f * (float)((2f * y) - Mathf.Pow(y, 2) - Mathf.Pow(y, 3)),
-                    20f
-                );
+       if (Vector3.Distance(spheres[199].transform.position, startPosition[199]) < 0.02f) {
+            if (iteration == 0) {
+                iteration = 1;
+                for (int i =0; i < numSphere; i++){
+                    // making a wing shape 
+                    t = i * 24f * Mathf.PI / numSphere;
+                    x = Mathf.Sin(t); 
+                    y = Mathf.Cos(t);
+                    endPosition[i] = new Vector3(
+                        5f * (float)(Mathf.Sqrt(2f) * Mathf.Pow(x, 3)),
+                        5f * (float)((2f * y) - Mathf.Pow(y, 2) - Mathf.Pow(y, 3)),
+                        20f
+                    );
+                }
+                for (int i =0; i < numSphere; i++){
+                    // Draw primitive elements:
+                    GameObject.Destroy(spheres[i]);
+                    spheres[i] = GameObject.CreatePrimitive(PrimitiveType.Cylinder); 
+
+                    // Position
+                    initPos[i] = startPosition[i];
+                    spheres[i].transform.position = initPos[i];
+
+                    // Color
+                    // Get the renderer of the spheres and assign colors.
+                    Renderer sphereRenderer = spheres[i].GetComponent<Renderer>();
+                    float hue = (float)i / numSphere; // Hue cycles through 0 to 1
+                    Color color = Color.HSVToRGB(hue, 1f, 1f); // Full saturation and brightness
+                    sphereRenderer.material.color = color;
+                }
+            } else if (iteration == 1)  {
+                iteration = 2;
+                for (int i = 0; i < numSphere; i++) {
+                    t = i * 24f * Mathf.PI / numSphere;
+                    x = Mathf.Sin(t) * (Mathf.Exp(Mathf.Cos(t))  - 2f * Mathf.Cos(4f * t) - Mathf.Pow(Mathf.Sin(t / 12f), 5f));
+                    y = Mathf.Cos(t) * (Mathf.Exp(Mathf.Cos(t)) - 2f * Mathf.Cos(4f * t)  - Mathf.Pow(Mathf.Sin(t / 12f), 5f));
+
+                    scale = 4f;
+                    endPosition[i] = new Vector3(scale * x, scale * y, 15f);
+                }
+                for (int i =0; i < numSphere; i++) {
+                    // Draw primitive elements:
+                    GameObject.Destroy(spheres[i]);
+                    spheres[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere); 
+
+                    // Position
+                    initPos[i] = startPosition[i];
+                    spheres[i].transform.position = initPos[i];
+
+                    // Color
+                    // Get the renderer of the spheres and assign colors.
+                    Renderer sphereRenderer = spheres[i].GetComponent<Renderer>();
+                    float hue = (float)i / numSphere; // Hue cycles through 0 to 1
+                    Color color = Color.HSVToRGB(hue, 1f, 1f); // Full saturation and brightness
+                    sphereRenderer.material.color = color;
+                } 
+            } else {
+                iteration = 0;
+                for (int i = 0; i < numSphere; i++) {
+                    // Calculate radius based on the cosine “pulse”
+                    t = i * 24f * Mathf.PI / numSphere;
+                    float r = R + alpha * Mathf.Cos(n * t);
+                    // Convert polar form to x, y
+                    x = r * Mathf.Cos(t);
+                    y = r * Mathf.Sin(t);
+
+                    scale = 4f;
+                    endPosition[i] = new Vector3(scale * x, scale * y, 15f);
+                }
+                for (int i =0; i < numSphere; i++) {
+                    // Draw primitive elements:
+                    GameObject.Destroy(spheres[i]);
+                    spheres[i] = GameObject.CreatePrimitive(PrimitiveType.Cube); 
+
+                    // Position
+                    initPos[i] = startPosition[i];
+                    spheres[i].transform.position = initPos[i];
+
+                    // Color
+                    // Get the renderer of the spheres and assign colors.
+                    Renderer sphereRenderer = spheres[i].GetComponent<Renderer>();
+                    float hue = (float)i / numSphere; // Hue cycles through 0 to 1
+                    Color color = Color.HSVToRGB(hue, 1f, 1f); // Full saturation and brightness
+                    sphereRenderer.material.color = color;
+                }
             }
-            for (int i =0; i < numSphere; i++){
-                // Draw primitive elements:
-                GameObject.Destroy(spheres[i]);
-                spheres[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere); 
-
-                // Position
-                initPos[i] = startPosition[i];
-                spheres[i].transform.position = initPos[i];
-
-                // Color
-                // Get the renderer of the spheres and assign colors.
-                Renderer sphereRenderer = spheres[i].GetComponent<Renderer>();
-                float hue = (float)i / numSphere; // Hue cycles through 0 to 1
-                Color color = Color.HSVToRGB(hue, 1f, 1f); // Full saturation and brightness
-                sphereRenderer.material.color = color;
-            }   
         }
     }
 }
