@@ -17,7 +17,8 @@ public class AudioReactive : MonoBehaviour
     int currentShape = 0;
     float time = 0f;
     float lerpFraction; // Lerp point between 0~1
-    float[] shapeChangeTimes = { 13f, 21f, 40f, 55f, 70f, 90f, 100f, 110f, 118f};
+   // float[] shapeChangeTimes = { 13f, 21f, 40f, 55f, 70f, 90f, 100f, 110f, 118f};
+   float[] shapeChangeTimes = {55f, 100f, 110f, 118f};
     int currentChangeIndex = 0;
 
     GameObject[] star1;
@@ -73,7 +74,7 @@ public class AudioReactive : MonoBehaviour
             float y = Mathf.Cos(t) * (Mathf.Exp(Mathf.Cos(t)) - 2f * Mathf.Cos(4f * t)  - Mathf.Pow(Mathf.Sin(t / 12f), 5f));
             float scale = 4f;
             endPosition[i] = new Vector3(scale * x, scale * y - 3f, 13f);
-            allPositions[0, i] = endPosition[i];
+            allPositions[1, i] = endPosition[i];
 
             // making star shape 
             float R = 1f; // radius for star
@@ -83,12 +84,12 @@ public class AudioReactive : MonoBehaviour
             x = r * Mathf.Cos(t);
             y = r * Mathf.Sin(t);
             endPosition[i] = new Vector3(scale * x, scale * y, 10f);
-            allPositions[1, i] = endPosition[i];
+            allPositions[0, i] = endPosition[i];
 
             endPosition[i] = allPositions[0, i];
 
-            allShapes[0] = PrimitiveType.Capsule;
-            allShapes[1] = PrimitiveType.Cube;
+            allShapes[1] = PrimitiveType.Capsule;
+            allShapes[0] = PrimitiveType.Cube;
         }
         // Let there be spheres..
         for (int i =0; i < numShapes; i++){
@@ -175,36 +176,46 @@ public class AudioReactive : MonoBehaviour
         float minScale = 1f;
         float maxScale = 3f;
         float lerpSpeed = 5f;
+        float scaledAmp = audioLevel / 4f;    
+        // Then clamp, in case it's still above 1
+        scaledAmp = Mathf.Clamp01(scaledAmp);
 
-        if (audioSource.time >= 48f) {
+        if (audioSource.time >= 40f && audioSource.time < 60f) {
+            for (int i = 0; i < numStar; i++) {
+                star1[i].transform.position += Vector3.down * 0.5f * Time.deltaTime;
+                star2[i].transform.position += Vector3.down * 0.5f * Time.deltaTime;
+                star3[i].transform.position += Vector3.down * 0.5f * Time.deltaTime;
+                star4[i].transform.position += Vector3.down * 0.5f * Time.deltaTime;
+            }
+        } else if (audioSource.time >= 60f) {
             for (int i = 0; i < numStar; i++) {
                 Destroy(star1[i]);
                 Destroy(star2[i]);
                 Destroy(star3[i]);
                 Destroy(star4[i]);
             }
-        } else {
+        } else {   
             for (int i = 0; i < numStar; i++) {
                 float currentScale = star1[i].transform.localScale.x;
-                float targetScale = Mathf.Lerp(minScale, maxScale, audioLevel);
+                float targetScale = Mathf.Lerp(minScale, maxScale, scaledAmp);
                 float newScale = Mathf.Lerp(currentScale, targetScale, Time.deltaTime * lerpSpeed);
 
                 star1[i].transform.localScale = new Vector3(newScale, newScale, newScale);
 
                 float currentScale2 = star2[i].transform.localScale.x;
-                float targetScale2 = Mathf.Lerp(minScale, maxScale, audioLevel);
+                float targetScale2 = Mathf.Lerp(minScale, maxScale, scaledAmp);
                 float newScale2 = Mathf.Lerp(currentScale2, targetScale2, Time.deltaTime * lerpSpeed);
 
                 star2[i].transform.localScale = new Vector3(newScale2, newScale2, newScale2);
 
                 float currentScale3 = star3[i].transform.localScale.x;
-                float targetScale3 = Mathf.Lerp(minScale, maxScale, audioLevel);
+                float targetScale3 = Mathf.Lerp(minScale, maxScale, scaledAmp);
                 float newScale3 = Mathf.Lerp(currentScale3, targetScale3, Time.deltaTime * lerpSpeed);
 
                 star3[i].transform.localScale = new Vector3(newScale3, newScale3, newScale3);
 
                 float currentScale4 = star4[i].transform.localScale.x;
-                float targetScale4 = Mathf.Lerp(minScale, maxScale, audioLevel);
+                float targetScale4 = Mathf.Lerp(minScale, maxScale, scaledAmp);
                 float newScale4 = Mathf.Lerp(currentScale4, targetScale4, Time.deltaTime * lerpSpeed);
 
                 star4[i].transform.localScale = new Vector3(newScale4, newScale4, newScale4);
@@ -227,7 +238,7 @@ public class AudioReactive : MonoBehaviour
             // Color Update over time
             Renderer sphereRenderer = shapes[i].GetComponent<Renderer>();
             //float brightness = Mathf.Abs(Mathf.Sin(time));  // yields 0–1
-            float brightness = Mathf.Clamp01(audioLevel * 0.8f);
+            float brightness = Mathf.Clamp01(scaledAmp * 0.8f);
             float hue = 0f;           // 0 = red
             float saturation = 1f;    // 1 = full saturation
 
