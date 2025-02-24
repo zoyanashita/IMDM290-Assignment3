@@ -18,11 +18,11 @@ public class AudioReactive : MonoBehaviour
     float time = 0f;
     float lerpFraction; // Lerp point between 0~1
    // float[] shapeChangeTimes = { 13f, 21f, 40f, 55f, 70f, 90f, 100f, 110f, 118f};
-   float[] shapeChangeTimes = {55f, 100f, 110f, 118f};
+   float[] shapeChangeTimes = {54f, 100f, 110f, 118f};
     int currentChangeIndex = 0;
 
     GameObject[] star1;
-    static int numStar = 100;
+    static int numStar = 50;
     Vector3[] star1Start, star1End;
 
     GameObject[] star2;
@@ -69,9 +69,10 @@ public class AudioReactive : MonoBehaviour
             startPosition[i] = new Vector3(r * Random.Range(-1f, 1f), r * Random.Range(-1f, 1f), r * Random.Range(-1f, 1f));        
 
             // making a wing shape 
-            float t = i * 24f * Mathf.PI / numShapes;
-            float x = Mathf.Sin(t) * (Mathf.Exp(Mathf.Cos(t))  - 2f * Mathf.Cos(4f * t) - Mathf.Pow(Mathf.Sin(t / 12f), 5f));
-            float y = Mathf.Cos(t) * (Mathf.Exp(Mathf.Cos(t)) - 2f * Mathf.Cos(4f * t)  - Mathf.Pow(Mathf.Sin(t / 12f), 5f));
+            float t = i * 24f * Mathf.PI / numShapes;;
+            float x = Mathf.Sin(t) * (Mathf.Exp(Mathf.Cos(t))  - 2f * Mathf.Cos(4f * t)  - Mathf.Pow(Mathf.Sin(t / 12f), 5f));
+            float y = Mathf.Cos(t) * (Mathf.Exp(Mathf.Cos(t))  - 2f * Mathf.Cos(4f * t) - Mathf.Pow(Mathf.Sin(t / 12f), 5f));
+
             float scale = 4f;
             endPosition[i] = new Vector3(scale * x, scale * y - 3f, 13f);
             allPositions[1, i] = endPosition[i];
@@ -106,64 +107,42 @@ public class AudioReactive : MonoBehaviour
             float r = 1f + 0.5f * Mathf.Cos(5f * t);
             float x = r * Mathf.Cos(t);
             float y = r * Mathf.Sin(t);
-            star1End[i] = new Vector3(x + 10f, y - 10f, 17f);
 
+            star1End[i] = new Vector3(x + 10f, y - 10f, 17f);
             star1[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere); 
             star1Start[i] = star1End[i];
             star1[i].transform.position = star1Start[i];
+            Renderer star1Render = star1[i].GetComponent<Renderer>();
+            Material transparentMat = Resources.Load<Material>("TransparentMat"); 
+            star1Render.material = transparentMat;
+            Color color = new Color(1f, 0.5f, 0f, 0f);
+            star1Render.material.color = color; 
 
-            Renderer sphereRenderer = star1[i].GetComponent<Renderer>();
-            Color color = new Color(1f, 0.6f, 0f); 
-            sphereRenderer.material.color = color; 
-        }
 
-        for (int i = 0; i < numStar; i++) {
-            // making star shape 
-            float t = i * 24f * Mathf.PI / numStar;
-            float r = 1f + 0.5f * Mathf.Cos(5f * t);
-            float x = r * Mathf.Cos(t);
-            float y = r * Mathf.Sin(t);
             star2End[i] = new Vector3(x - 10f, y + 10f, 17f);
-
             star2[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere); 
             star2Start[i] = star2End[i];
             star2[i].transform.position = star2Start[i];
+            Renderer star2Render = star2[i].GetComponent<Renderer>();
+            star2Render.material = transparentMat;
+            star2Render.material.color = color; 
 
-            Renderer sphereRenderer = star2[i].GetComponent<Renderer>();
-            Color color = new Color(1f, 0.6f, 0f); 
-            sphereRenderer.material.color = color; 
-        }
-        for (int i = 0; i < numStar; i++) {
-            // making star shape 
-            float t = i * 24f * Mathf.PI / numStar;
-            float r = 1f + 0.5f * Mathf.Cos(5f * t);
-            float x = r * Mathf.Cos(t);
-            float y = r * Mathf.Sin(t);
+
             star3End[i] = new Vector3(x - 20f, y + 2, 17f);
-
             star3[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere); 
             star3Start[i] = star3End[i];
             star3[i].transform.position = star3Start[i];
+            Renderer star3Render = star3[i].GetComponent<Renderer>();
+            star3Render.material = transparentMat;
+            star3Render.material.color = color;
 
-            Renderer sphereRenderer = star3[i].GetComponent<Renderer>();
-            Color color = new Color(1f, 0.6f, 0f); 
-            sphereRenderer.material.color = color; 
-        }
-        for (int i = 0; i < numStar; i++) {
-            // making star shape 
-            float t = i * 24f * Mathf.PI / numStar;
-            float r = 1f + 0.5f * Mathf.Cos(5f * t);
-            float x = r * Mathf.Cos(t);
-            float y = r * Mathf.Sin(t);
             star4End[i] = new Vector3(x + 20f, y - 2, 17f);
-
             star4[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere); 
             star4Start[i] = star4End[i];
             star4[i].transform.position = star4Start[i];
-
-            Renderer sphereRenderer = star4[i].GetComponent<Renderer>();
-            Color color = new Color(1f, 0.6f, 0f); 
-            sphereRenderer.material.color = color; 
+            Renderer star4Render = star4[i].GetComponent<Renderer>();
+            star4Render.material = transparentMat;
+            star4Render.material.color = color; 
         }
     }
 
@@ -180,47 +159,100 @@ public class AudioReactive : MonoBehaviour
         // Then clamp, in case it's still above 1
         scaledAmp = Mathf.Clamp01(scaledAmp);
 
-        if (audioSource.time >= 40f && audioSource.time < 60f) {
+        float currentTime = audioSource.time;
+
+        if (currentTime < 60f) {
+            // For example, star1 is hidden until 10s:
             for (int i = 0; i < numStar; i++) {
-                star1[i].transform.position += Vector3.down * 0.5f * Time.deltaTime;
-                star2[i].transform.position += Vector3.down * 0.5f * Time.deltaTime;
-                star3[i].transform.position += Vector3.down * 0.5f * Time.deltaTime;
-                star4[i].transform.position += Vector3.down * 0.5f * Time.deltaTime;
+                Renderer rend = star1[i].GetComponent<Renderer>();
+                Color c = rend.material.color;
+                // If we’re still under 40s, invisible
+                if (currentTime < 10f) {
+                    c.a = 0f;
+                } else {
+                    c.a = 1f;
+                }
+                rend.material.color = c;
             }
-        } else if (audioSource.time >= 60f) {
             for (int i = 0; i < numStar; i++) {
-                Destroy(star1[i]);
-                Destroy(star2[i]);
-                Destroy(star3[i]);
-                Destroy(star4[i]);
+                Renderer rend = star2[i].GetComponent<Renderer>();
+                Color c = rend.material.color;
+                // If we’re still under 40s, invisible
+                if (currentTime < 10f) {
+                    c.a = 0f;
+                } else {
+                    c.a = 1f;
+                }
+                rend.material.color = c;
             }
-        } else {   
             for (int i = 0; i < numStar; i++) {
-                float currentScale = star1[i].transform.localScale.x;
-                float targetScale = Mathf.Lerp(minScale, maxScale, scaledAmp);
-                float newScale = Mathf.Lerp(currentScale, targetScale, Time.deltaTime * lerpSpeed);
-
-                star1[i].transform.localScale = new Vector3(newScale, newScale, newScale);
-
-                float currentScale2 = star2[i].transform.localScale.x;
-                float targetScale2 = Mathf.Lerp(minScale, maxScale, scaledAmp);
-                float newScale2 = Mathf.Lerp(currentScale2, targetScale2, Time.deltaTime * lerpSpeed);
-
-                star2[i].transform.localScale = new Vector3(newScale2, newScale2, newScale2);
-
-                float currentScale3 = star3[i].transform.localScale.x;
-                float targetScale3 = Mathf.Lerp(minScale, maxScale, scaledAmp);
-                float newScale3 = Mathf.Lerp(currentScale3, targetScale3, Time.deltaTime * lerpSpeed);
-
-                star3[i].transform.localScale = new Vector3(newScale3, newScale3, newScale3);
-
-                float currentScale4 = star4[i].transform.localScale.x;
-                float targetScale4 = Mathf.Lerp(minScale, maxScale, scaledAmp);
-                float newScale4 = Mathf.Lerp(currentScale4, targetScale4, Time.deltaTime * lerpSpeed);
-
-                star4[i].transform.localScale = new Vector3(newScale4, newScale4, newScale4);
+                Renderer rend = star3[i].GetComponent<Renderer>();
+                Color c = rend.material.color;
+                // If we’re still under 40s, invisible
+                if (currentTime < 10f) {
+                    c.a = 0f;
+                } else {
+                    c.a = 1f;
+                }
+                rend.material.color = c;
+            }
+            for (int i = 0; i < numStar; i++) {
+                Renderer rend = star4[i].GetComponent<Renderer>();
+                Color c = rend.material.color;
+                // If we’re still under 40s, invisible
+                if (currentTime < 10f) {
+                    c.a = 0f;
+                } else {
+                    c.a = 1f;
+                }
+                rend.material.color = c;
             }
         }
+    
+ 
+
+            if (audioSource.time >= 40f && audioSource.time < 60f) {
+                for (int i = 0; i < numStar; i++) {
+                    star1[i].transform.position += Vector3.down * 0.5f * Time.deltaTime;
+                    star2[i].transform.position += Vector3.down * 0.5f * Time.deltaTime;
+                    star3[i].transform.position += Vector3.down * 0.5f * Time.deltaTime;
+                    star4[i].transform.position += Vector3.down * 0.5f * Time.deltaTime;
+                }
+            } else if (audioSource.time >= 60f) {
+                for (int i = 0; i < numStar; i++) {
+                    Destroy(star1[i]);
+                    Destroy(star2[i]);
+                    Destroy(star3[i]);
+                    Destroy(star4[i]);
+                }
+            } else {   
+                for (int i = 0; i < numStar; i++) {
+                    float currentScale = star1[i].transform.localScale.x;
+                    float targetScale = Mathf.Lerp(minScale, maxScale, scaledAmp);
+                    float newScale = Mathf.Lerp(currentScale, targetScale, Time.deltaTime * lerpSpeed);
+
+                    star1[i].transform.localScale = new Vector3(newScale, newScale, newScale);
+
+                    float currentScale2 = star2[i].transform.localScale.x;
+                    float targetScale2 = Mathf.Lerp(minScale, maxScale, scaledAmp);
+                    float newScale2 = Mathf.Lerp(currentScale2, targetScale2, Time.deltaTime * lerpSpeed);
+
+                    star2[i].transform.localScale = new Vector3(newScale2, newScale2, newScale2);
+
+                    float currentScale3 = star3[i].transform.localScale.x;
+                    float targetScale3 = Mathf.Lerp(minScale, maxScale, scaledAmp);
+                    float newScale3 = Mathf.Lerp(currentScale3, targetScale3, Time.deltaTime * lerpSpeed);
+
+                    star3[i].transform.localScale = new Vector3(newScale3, newScale3, newScale3);
+
+                    float currentScale4 = star4[i].transform.localScale.x;
+                    float targetScale4 = Mathf.Lerp(minScale, maxScale, scaledAmp);
+                    float newScale4 = Mathf.Lerp(currentScale4, targetScale4, Time.deltaTime * lerpSpeed);
+
+                    star4[i].transform.localScale = new Vector3(newScale4, newScale4, newScale4);
+                }
+            }
+        
 
         // what to update over time?
         for (int i =0; i < numShapes; i++){
