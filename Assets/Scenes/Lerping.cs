@@ -18,11 +18,11 @@ public class AudioReactive : MonoBehaviour
     float time = 0f;
     float lerpFraction; // Lerp point between 0~1
    // float[] shapeChangeTimes = { 13f, 21f, 40f, 55f, 70f, 90f, 100f, 110f, 118f};
-   float[] shapeChangeTimes = {54f, 100f, 110f, 118f};
+   float[] shapeChangeTimes = {55.5f, 100f, 110f, 118f};
     int currentChangeIndex = 0;
 
     GameObject[] star1;
-    static int numStar = 50;
+    static int numStar = 45;
     Vector3[] star1Start, star1End;
 
     GameObject[] star2;
